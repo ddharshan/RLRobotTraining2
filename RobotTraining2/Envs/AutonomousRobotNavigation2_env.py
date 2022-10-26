@@ -104,7 +104,7 @@ class AutoRobot2CEnv(BaseEnv):   #change----------------------------------------
         return {'action_type': raw_action[0], 'action_args': raw_action[1]}
 
     def __repr__(self) -> str:
-        return "AutonomousRobotNavigation Env"   #change------------------------------------------------------------------------
+        return "AutonomousRobotNavigation2 Env"   #change------------------------------------------------------------------------
 
     def enable_save_replay(self, replay_path: Optional[str] = None) -> None:
         if replay_path is None:
