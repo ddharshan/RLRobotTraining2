@@ -47,6 +47,7 @@ def main(main_cfg, create_cfg, seed=0):
     policy = PPOPolicy(cfg.policy, model=model)
     policy.eval_mode.load_state_dict(torch.load("./AutonomousRobotNavigation2_hppo_seed0/ckpt/ckpt_best.pth.tar", map_location='cpu')) #change----------------------------------------------------
 
+    
     # evaluate
     tb_logger = SummaryWriter(os.path.join('./{}/log/'.format(cfg.exp_name), 'serial'))
     evaluator = InteractionSerialEvaluator(
@@ -59,3 +60,4 @@ if __name__ == "__main__":
     # gym_hybrid environmrnt rendering is using API from "gym.envs.classic_control.rendering"
     # which is abandoned in gym >= 0.22.0, please check the gym version before rendering.
     main(AutonomousRobotNavigation2_hppo_config, AutonomousRobotNavigation2_hppo_create_config, seed=0) #change----------------------------------------------------
+    
