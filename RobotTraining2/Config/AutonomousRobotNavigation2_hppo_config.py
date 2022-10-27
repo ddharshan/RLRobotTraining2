@@ -1,7 +1,9 @@
 from easydict import EasyDict
 
-AutonomousRobotNavigation2_hppo_config = dict(     #change------------------------------------------------
-    exp_name='AutonomousRobotNavigation2_hppo_seed0',  #change---------------------------------------------
+#change - 1st two lines------------------------------------------------------
+
+AutonomousRobotNavigation2_hppo_config = dict(    
+    exp_name='AutonomousRobotNavigation2_hppo_seed0',
     env=dict(
         collector_env_num=8,
         evaluator_env_num=5,
@@ -33,7 +35,7 @@ AutonomousRobotNavigation2_hppo_config = dict(     #change----------------------
             batch_size=320,
             learning_rate=5e-4, #The default is 3e-4
             value_weight=0.5,
-            entropy_weight=0.03, #default is 0.03
+            entropy_weight=0.03,
             clip_ratio=0.2,
             adv_norm=True,
             value_norm=True,
@@ -47,17 +49,22 @@ AutonomousRobotNavigation2_hppo_config = dict(     #change----------------------
         eval=dict(evaluator=dict(eval_freq=200, ), ),
     ),
 )
+
 AutonomousRobotNavigation2_hppo_config = EasyDict(AutonomousRobotNavigation2_hppo_config)  #change------------------------------------
 main_config = AutonomousRobotNavigation2_hppo_config    #change--------------------------------------------------------------
 
-AutonomousRobotNavigation2_hppo_create_config = dict(       #change---------------------------------------------------------
+
+#change--3lines below bracket---------------------------------------------------
+
+AutonomousRobotNavigation2_hppo_create_config = dict(
     env=dict(
-        type='AutonomousRobotNavigation2',    #change--------------------------------------------------
-        import_names=['RobotTraining2.Envs.AutonomousRobotNavigation2_env'],  #change-----------------------------------
+        type='AutonomousRobotNavigation2',
+        import_names=['RobotTraining2.Envs.AutonomousRobotNavigation2_env'],
     ),
     env_manager=dict(type='subprocess'),
     policy=dict(type='ppo'),
 )
+
 AutonomousRobotNavigation2_hppo_create_config = EasyDict(AutonomousRobotNavigation2_hppo_create_config)   #change----------------------------------
 create_config = AutonomousRobotNavigation2_hppo_create_config  #change---------------------------------------------------------
 
