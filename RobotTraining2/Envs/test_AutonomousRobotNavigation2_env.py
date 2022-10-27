@@ -15,7 +15,7 @@ class TestAutoRobot2CEnv:  #change----------------------------------------------
         assert env._seed == 314
         obs = env.reset()
         assert obs.shape == (28, )  #HERE-----------------------------------------------------------------------
-        for i in range(500):  #change-----------------------------------------------------
+        for i in range(400):   #change-----------------------------------------------------
             random_action = env.random_action()
             print('random_action', random_action)
             timestep = env.step(random_action)
