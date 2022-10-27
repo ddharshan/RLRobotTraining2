@@ -12,7 +12,7 @@ from ding.utils import ENV_REGISTRY
 
 
 @ENV_REGISTRY.register('AutonomousRobotNavigation2') #change----------------------------------------------------------
-class AutoRobot2CEnv(BaseEnv):   #change----------------------------------------------------------
+class AutoRobot2CEnv(BaseEnv):   #change---------------------------------------------------------------------------------------
     default_env_id = ['Moving-v0']
 
     def __init__(self, cfg: EasyDict) -> None:
@@ -104,7 +104,7 @@ class AutoRobot2CEnv(BaseEnv):   #change----------------------------------------
         return {'action_type': raw_action[0], 'action_args': raw_action[1]}
 
     def __repr__(self) -> str:
-        return "AutonomousRobotNavigation2 Env"   #change------------------------------------------------------------------------
+        return "AutonomousRobotNavigation2 Env"    #change ---------------------------------------------------------------------------
 
     def enable_save_replay(self, replay_path: Optional[str] = None) -> None:
         if replay_path is None:
