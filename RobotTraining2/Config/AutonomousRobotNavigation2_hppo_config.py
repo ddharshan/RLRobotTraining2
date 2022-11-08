@@ -6,11 +6,11 @@ AutonomousRobotNavigation2_hppo_config = dict(
     exp_name='AutonomousRobotNavigation2_hppo_seed0',
     env=dict(
         collector_env_num=8,
-        evaluator_env_num=10,
+        evaluator_env_num=5,
         # (bool) Scale output action into legal range, usually [-1, 1].
         act_scale=True,
         env_id='Moving-v0',  # ['Sliding-v0', 'Moving-v0']
-        n_evaluator_episode=10,
+        n_evaluator_episode=5,
         stop_value=1.5,
     ),
     policy=dict(
@@ -33,7 +33,7 @@ AutonomousRobotNavigation2_hppo_config = dict(
         learn=dict(
             epoch_per_collect=10,
             batch_size=320,
-            learning_rate=5e-4, #The default is 3e-4
+            learning_rate=3e-4, #The default is 3e-4
             value_weight=0.5,
             entropy_weight=0.03,
             clip_ratio=0.2,
