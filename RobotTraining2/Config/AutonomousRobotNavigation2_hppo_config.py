@@ -5,7 +5,7 @@ from easydict import EasyDict
 AutonomousRobotNavigation2_hppo_config = dict(    
     exp_name='AutonomousRobotNavigation2_hppo_seed0',
     env=dict(
-        collector_env_num=8,
+        collector_env_num=5,
         evaluator_env_num=5,
         # (bool) Scale output action into legal range, usually [-1, 1].
         act_scale=True,
