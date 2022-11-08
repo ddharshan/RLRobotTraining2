@@ -31,7 +31,7 @@ AutonomousRobotNavigation2_hppo_config = dict(
             bound_type='tanh',
         ),
         learn=dict(
-            epoch_per_collect=10,
+            epoch_per_collect=5,  #default is 10
             batch_size=320,
             learning_rate=5e-4, #The default is 3e-4
             value_weight=0.5,
