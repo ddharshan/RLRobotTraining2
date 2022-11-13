@@ -6,11 +6,11 @@ AutonomousRobotNavigation2_hppo_config = dict(
     exp_name='AutonomousRobotNavigation2_hppo_seed0',
     env=dict(
         collector_env_num=8, #default is 8
-        evaluator_env_num=15,
+        evaluator_env_num=5,
         # (bool) Scale output action into legal range, usually [-1, 1].
         act_scale=True,
         env_id='Moving-v0',  # ['Sliding-v0', 'Moving-v0']
-        n_evaluator_episode=15,
+        n_evaluator_episode=5,
         stop_value=1.8,
     ),
     policy=dict(
