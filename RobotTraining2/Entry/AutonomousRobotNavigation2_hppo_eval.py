@@ -61,4 +61,3 @@ if __name__ == "__main__":
     # which is abandoned in gym >= 0.22.0, please check the gym version before rendering.
     main(AutonomousRobotNavigation2_hppo_config, AutonomousRobotNavigation2_hppo_create_config, seed=0) #change----------------------------------------------------
     
- 
