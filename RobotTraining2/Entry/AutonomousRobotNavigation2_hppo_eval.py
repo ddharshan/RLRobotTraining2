@@ -1,124 +1,63 @@
-from typing import Any, List, Dict, Union, Optional
-import time
+import os
 import gym
-import AutonomousRobotNavigation2 #change-----------------------------------------------------------
-import copy
-import numpy as np
+import torch
+from tensorboardX import SummaryWriter
 from easydict import EasyDict
-from ding.envs import BaseEnv, BaseEnvTimestep
-from ding.envs.common import affine_transform
-from ding.torch_utils import to_ndarray
-from ding.utils import ENV_REGISTRY
+from functools import partial
+
+from ding.config import compile_config
+from ding.worker import BaseLearner, SampleSerialCollector, InteractionSerialEvaluator, AdvancedReplayBuffer
+from ding.envs import BaseEnvManager, DingEnvWrapper
+from ding.envs import get_vec_env_setting, create_env_manager
+from ding.policy import  PPOPolicy
+from ding.model import VAC   
+from ding.utils import set_pkg_seed
+from ding.rl_utils import get_epsilon_greedy_fn
+from RobotTraining2.Config.AutonomousRobotNavigation2_hppo_config import AutonomousRobotNavigation2_hppo_config, AutonomousRobotNavigation2_hppo_create_config  #change------------------------------
 
 
-@ENV_REGISTRY.register('AutonomousRobotNavigation2') #change----------------------------------------------------------
-class AutoRobot2CEnv(BaseEnv):   #change---------------------------------------------------------------------------------------
-    default_env_id = ['Moving-v0']
+def main(main_cfg, create_cfg, seed=0):
+    cfg = compile_config(
+        main_cfg,
+        BaseEnvManager,
+        PPOPolicy,
+        BaseLearner,
+        SampleSerialCollector,
+        InteractionSerialEvaluator,
+        AdvancedReplayBuffer,
+        create_cfg=create_cfg,
+        save_cfg=True
+    )
 
-    def __init__(self, cfg: EasyDict) -> None:
-        self._cfg = cfg
-        self._env_id = cfg.env_id
-        assert self._env_id in self.default_env_id
-        self._act_scale = cfg.act_scale
-        self._init_flag = False
-        self._replay_path = None
+    create_cfg.policy.type = create_cfg.policy.type + '_command'
+    env_fn = None
+    cfg = compile_config(cfg, seed=seed, env=env_fn, auto=True, create_cfg=create_cfg, save_cfg=True)
+    # Create main components: env, policy
+    env_fn, collector_env_cfg, evaluator_env_cfg = get_vec_env_setting(cfg.env)
+    evaluator_env = create_env_manager(cfg.env.manager, [partial(env_fn, cfg=c) for c in evaluator_env_cfg])
 
-    def reset(self) -> np.ndarray:
-        if not self._init_flag:
-            self._env = gym.make(self._env_id)
-            if self._replay_path is not None:
-                if gym.version.VERSION > '0.22.0':
-                    # Gym removed classic control rendering to support using pygame instead.
-                    # And thus, gym hybrid currently do not support rendering.
-                    self._env.metadata["render_modes"] = ["human", "rgb_array"]
-                else:
-                    self._env = gym.wrappers.RecordVideo(
-                        self._env,
-                        video_folder=self._replay_path,
-                        episode_trigger=lambda episode_id: True,
-                        name_prefix='rl-video-{}'.format(id(self))
-                    )
-                    self._env.metadata["render.modes"] = ["human", "rgb_array"]
+    evaluator_env.enable_save_replay('AutonomousRobotNavigation2_hppo_seed0/video')  # switch save replay interface change-----------------------------------------
 
-            self._observation_space = self._env.observation_space
-            self._action_space = self._env.action_space
-            self._reward_space = gym.spaces.Box(
-                low=self._env.reward_range[0], high=self._env.reward_range[1], shape=(1, ), dtype=np.float32
-            )
-            self._init_flag = True
-        if hasattr(self, '_seed') and hasattr(self, '_dynamic_seed') and self._dynamic_seed:
-            np_seed = 100 * np.random.randint(1, 1000)
-            self._env.seed(self._seed + np_seed)
-        elif hasattr(self, '_seed'):
-            self._env.seed(self._seed)
-        self._final_eval_reward = 0
-        obs = self._env.reset()
-        obs = to_ndarray(obs).astype(np.float32)
-        return obs
+    # Set random seed for all package and instance
+    evaluator_env.seed(seed, dynamic_seed=False)
+    set_pkg_seed(seed, use_cuda=cfg.policy.cuda)
 
-    def close(self) -> None:
-        if self._init_flag:
-            self._env.close()
-        self._init_flag = False
+    # Set up RL Policy
+    model = VAC(**cfg.policy.model) 
+    policy = PPOPolicy(cfg.policy, model=model)
+    policy.eval_mode.load_state_dict(torch.load("./AutonomousRobotNavigation2_hppo_seed0/ckpt/ckpt_best.pth.tar", map_location='cpu')) #change----------------------------------------------------
 
-    def seed(self, seed: int, dynamic_seed: bool = True) -> None:
-        self._seed = seed
-        self._dynamic_seed = dynamic_seed
-        np.random.seed(self._seed)
+    
+    # evaluate
+    tb_logger = SummaryWriter(os.path.join('./{}/log/'.format(cfg.exp_name), 'serial'))
+    evaluator = InteractionSerialEvaluator(
+        cfg.policy.eval.evaluator, evaluator_env, policy.eval_mode, tb_logger, exp_name=cfg.exp_name
+    )
+    evaluator.eval()
 
-    def step(self, action: Dict) -> BaseEnvTimestep:
-        if self._act_scale:
-            # acceleration_value.
-            action['action_args'][0] = affine_transform(action['action_args'][0], min_val=0, max_val=1)
-            # rotation_value. Following line can be omitted, because in the affine_transform function,
-            # we have already done the clip(-1,1) operation
-            action['action_args'][1] = affine_transform(action['action_args'][1], min_val=-1, max_val=1)
-            action = [action['action_type'], action['action_args']]
-        obs, rew, done, info = self._env.step(action)
-        self._final_eval_reward += rew
-        if done:
-            info['final_eval_reward'] = self._final_eval_reward
-        obs = to_ndarray(obs)
-        if isinstance(obs, list):  # corner case
-            for i in range(len(obs)):
-                if len(obs[i].shape) == 0:
-                    obs[i] = np.array([obs[i]])
-            obs = np.concatenate(obs)
-        assert isinstance(obs, np.ndarray) and obs.shape == (44, )   #OBS-----------------------------------------------------------------------------
-        obs = obs.astype(np.float32)
 
-        rew = to_ndarray([rew])  # wrapped to be transfered to a numpy array with shape (1,)
-        if isinstance(rew, list):
-            rew = rew[0]
-        assert isinstance(rew, np.ndarray) and rew.shape == (1, )
-         
-        info['action_args_mask'] = np.array([[1, 0], [0, 1], [0, 0]])
-        return BaseEnvTimestep(obs, rew, done, info)
-
-    def random_action(self) -> Dict:
-        # action_type: 0, 1, 2
-        # action_args:
-        #   - acceleration_value: [0, 1]
-        #   - rotation_value: [-1, 1]
-        raw_action = self._action_space.sample()
-        return {'action_type': raw_action[0], 'action_args': raw_action[1]}
-
-    def __repr__(self) -> str:
-        return "AutonomousRobotNavigation2 Env"    #change ---------------------------------------------------------------------------
-
-    def enable_save_replay(self, replay_path: Optional[str] = None) -> None:
-        if replay_path is None:
-            replay_path = './video'
-        self._replay_path = replay_path
-
-    @property
-    def observation_space(self) -> gym.spaces.Space:
-        return self._observation_space
-
-    @property
-    def action_space(self) -> gym.spaces.Space:
-        return self._action_space
-
-    @property
-    def reward_space(self) -> gym.spaces.Space:
-        return self._reward_space
+if __name__ == "__main__":
+    # gym_hybrid environmrnt rendering is using API from "gym.envs.classic_control.rendering"
+    # which is abandoned in gym >= 0.22.0, please check the gym version before rendering.
+    main(AutonomousRobotNavigation2_hppo_config, AutonomousRobotNavigation2_hppo_create_config, seed=0) #change----------------------------------------------------
+    
