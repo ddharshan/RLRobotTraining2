@@ -84,7 +84,7 @@ class AutoRobot2CEnv(BaseEnv):   #change----------------------------------------
                 if len(obs[i].shape) == 0:
                     obs[i] = np.array([obs[i]])
             obs = np.concatenate(obs)
-        assert isinstance(obs, np.ndarray) and obs.shape == (36, )   #OBS-----------------------------------------------------------------------------
+        assert isinstance(obs, np.ndarray) and obs.shape == (52, )   #OBS-----------------------------------------------------------------------------
         obs = obs.astype(np.float32)
 
         rew = to_ndarray([rew])  # wrapped to be transfered to a numpy array with shape (1,)
