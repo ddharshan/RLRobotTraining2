@@ -5,13 +5,13 @@ from easydict import EasyDict
 AutonomousRobotNavigation2_hppo_config = dict(    
     exp_name='AutonomousRobotNavigation2_hppo_seed0',
     env=dict(
-        collector_env_num=4, #default is 8
-        evaluator_env_num=2,
+        collector_env_num=16, #default is 8
+        evaluator_env_num=12,
         # (bool) Scale output action into legal range, usually [-1, 1].
         act_scale=True,
         env_id='Moving-v0',  # ['Sliding-v0', 'Moving-v0']
-        n_evaluator_episode=2,
-        stop_value=1,
+        n_evaluator_episode=12,
+        stop_value=1.63,
     ),
     policy=dict(
         cuda=True,
@@ -19,7 +19,7 @@ AutonomousRobotNavigation2_hppo_config = dict(
         action_space='hybrid',
         recompute_adv=True,
         model=dict(
-            obs_shape=52,   #OBS--------------------------------------------------------------------
+            obs_shape=20,   #OBS--------------------------------------------------------------------
             action_shape=dict(
                 action_type_shape=3,
                 action_args_shape=2,
