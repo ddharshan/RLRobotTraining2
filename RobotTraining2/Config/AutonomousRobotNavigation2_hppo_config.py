@@ -11,7 +11,7 @@ AutonomousRobotNavigation2_hppo_config = dict(
         act_scale=True,
         env_id='Moving-v0',  # ['Sliding-v0', 'Moving-v0']
         n_evaluator_episode=12,
-        stop_value=1.78,
+        stop_value=1.818,
     ),
     policy=dict(
         cuda=True,
