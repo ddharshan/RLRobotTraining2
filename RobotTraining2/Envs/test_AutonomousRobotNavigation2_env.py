@@ -14,14 +14,14 @@ class TestAutoRobot2CEnv:  #change----------------------------------------------
         env.seed(314, dynamic_seed=False)
         assert env._seed == 314
         obs = env.reset()
-        assert obs.shape == (60, )  #OBS-----------------------------------------------------------------------
+        assert obs.shape == (20, )  #OBS-----------------------------------------------------------------------
         for i in range(1000):   #change-----------------------------------------------------
             random_action = env.random_action()
             print('random_action', random_action)
             timestep = env.step(random_action)
             assert isinstance(timestep.obs, np.ndarray)
             assert isinstance(timestep.done, bool)
-            assert timestep.obs.shape == (60, )    #OBS-------------------------------------------------------------------
+            assert timestep.obs.shape == (20, )    #OBS-------------------------------------------------------------------
             assert timestep.reward.shape == (1, )
             assert timestep.info['action_args_mask'].shape == (3, 2)
             if timestep.done:
