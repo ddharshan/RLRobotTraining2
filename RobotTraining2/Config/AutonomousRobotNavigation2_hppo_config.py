@@ -9,9 +9,9 @@ AutonomousRobotNavigation2_hppo_config = dict(
         evaluator_env_num=12,
         # (bool) Scale output action into legal range, usually [-1, 1].
         act_scale=True,
-        env_id='Moving-v0',  # ['Sliding-v0', 'Moving-v0']
+        env_id='DRLRobot-v0', 
         n_evaluator_episode=12,
-        stop_value=1,
+        stop_value=1.63,
     ),
     policy=dict(
         cuda=True,
