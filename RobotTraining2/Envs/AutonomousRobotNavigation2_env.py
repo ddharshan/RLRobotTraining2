@@ -13,7 +13,7 @@ from ding.utils import ENV_REGISTRY
 
 @ENV_REGISTRY.register('AutonomousRobotNavigation2') #change----------------------------------------------------------
 class AutoRobot2CEnv(BaseEnv):   #change---------------------------------------------------------------------------------------
-    default_env_id = ['Moving-v0']
+    default_env_id = ['DRLRobot-v0']
 
     def __init__(self, cfg: EasyDict) -> None:
         self._cfg = cfg
