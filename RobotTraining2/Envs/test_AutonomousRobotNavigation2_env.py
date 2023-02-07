@@ -9,7 +9,7 @@ from RobotTraining2.Envs import AutoRobot2CEnv #change--------------------------
 class TestAutoRobot2CEnv:  #change-----------------------------------------------------
 
     def test_naive(self):
-        env = AutoRobot2CEnv(EasyDict({'env_id': 'Moving-v0', 'act_scale': False})) #change----------------------------------------------
+        env = AutoRobot2CEnv(EasyDict({'env_id': 'DRLRobot-v0', 'act_scale': False})) #change----------------------------------------------
         env.enable_save_replay('./video')
         env.seed(314, dynamic_seed=False)
         assert env._seed == 314
