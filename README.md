@@ -16,6 +16,7 @@ contains the Deep Neural Network architecture used to train the robot within thi
 
 For a detailed explanation of the methodology and results, please refer to my thesis publication:
 https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5178305
+
 Pls feel free to reach me, if u get any doubts - ddharshan126@gmail.com
 
 
