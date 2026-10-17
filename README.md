@@ -22,7 +22,7 @@ Pls feel free to reach me, if u get any doubts - ddharshan126@gmail.com
 
 ## Author
 
-Developed by Dhivyadharshan Seetharaman  
+Developed by Seetharaman Dhivyadharshan
 MSc in Industrial Automation   
 Original implementation and training by the author.
 
@@ -35,7 +35,7 @@ If you use this work in research, academic projects, or publications, please cit
 ### BibTeX
 ```bibtex
 @misc{Ddharshan_RLAutonomousRobotNavigation2,
-  author       = {Ddharshan},
+  author       = {Seetharaman Dhivyadharshan},
   title        = {RLAutonomousRobotNavigation2: Reinforcement Learning-Based Autonomous Robot Navigation},
   year         = {2022},
   publisher    = {GitHub},
