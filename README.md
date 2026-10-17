@@ -23,7 +23,6 @@ Pls feel free to reach me, if u get any doubts - ddharshan126@gmail.com
 ## Author
 
 Developed by Seetharaman Dhivyadharshan
-
 MSc in Industrial Automation   
 Original implementation and training by the author.
 
